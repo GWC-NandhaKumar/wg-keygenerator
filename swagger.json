@@ -9,6 +9,10 @@
     {
       "url": "http://localhost:3000",
       "description": "Local server"
+    },
+    {
+      "url": "https://wg-keygenerator-production.up.railway.app",
+      "description": "Production server"
     }
   ],
   "paths": {
