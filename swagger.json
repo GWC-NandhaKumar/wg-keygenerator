@@ -1,0 +1,188 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Cleverbridge License Key Generator API",
+    "description": "Simple backend for Cleverbridge key generation and dashboard redirect flow.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cleverbridge/keygen": {
+      "post": {
+        "summary": "Generate license key from Cleverbridge payload",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "PURCHASE_ID",
+                  "JSON"
+                ],
+                "properties": {
+                  "PURCHASE_ID": {
+                    "type": "string",
+                    "example": "12345"
+                  },
+                  "PRODUCT_ID": {
+                    "type": "string",
+                    "example": "999"
+                  },
+                  "EMAIL": {
+                    "type": "string",
+                    "example": "jane@example.com"
+                  },
+                  "FIRSTNAME": {
+                    "type": "string",
+                    "example": "Jane"
+                  },
+                  "LASTNAME": {
+                    "type": "string",
+                    "example": "Doe"
+                  },
+                  "JSON": {
+                    "type": "string",
+                    "example": "{\"PaidOrderNotification\":{\"PurchaseId\":\"12345\",\"ProductId\":\"999\",\"SubscriptionId\":\"sub_001\",\"Customer\":{\"Email\":\"jane@example.com\",\"FirstName\":\"Jane\",\"LastName\":\"Doe\"}}}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "License generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "licenseKey": {
+                      "type": "string",
+                      "example": "WG-A1B2-C3D4"
+                    },
+                    "redirectUrl": {
+                      "type": "string",
+                      "example": "https://dashboard.example.com/billing/success?purchaseId=12345&productId=999"
+                    },
+                    "receivedData": {
+                      "type": "object",
+                      "description": "All incoming fields from Cleverbridge"
+                    },
+                    "parsedData": {
+                      "type": "object",
+                      "properties": {
+                        "purchaseId": {
+                          "type": "string",
+                          "example": "12345"
+                        },
+                        "productId": {
+                          "type": "string",
+                          "example": "999",
+                          "nullable": true
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "jane@example.com",
+                          "nullable": true
+                        },
+                        "firstName": {
+                          "type": "string",
+                          "example": "Jane",
+                          "nullable": true
+                        },
+                        "lastName": {
+                          "type": "string",
+                          "example": "Doe",
+                          "nullable": true
+                        },
+                        "subscriptionId": {
+                          "type": "string",
+                          "example": "sub_001",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required purchase field",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Missing required purchase details"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "License generation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "License generation failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
